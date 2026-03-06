@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparador PJE × SNA</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --border: #1e2330;
+    --accent-pje: #00d4ff;
+    --accent-sna: #ff6b35;
+    --accent-ok: #00e5a0;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --card: #181c27;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 32px 24px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  header h1 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, var(--accent-pje), var(--accent-ok), var(--accent-sna));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    color: var(--muted);
+    margin-top: 8px;
+    font-size: 0.95rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto 28px;
+  }
+
+  @media (max-width: 700px) {
+    .inputs { grid-template-columns: 1fr; }
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .label-pje { color: var(--accent-pje); }
+  .label-sna { color: var(--accent-sna); }
+
+  textarea {
+    width: 100%;
+    height: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    padding: 14px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.7;
+  }
+
+  textarea:focus { border-color: var(--accent-ok); }
+
+  .btn-row {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  button {
+    background: linear-gradient(135deg, #00d4ff22, #00e5a022);
+    border: 1px solid var(--accent-ok);
+    color: var(--accent-ok);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    padding: 14px 48px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  button:hover {
+    background: var(--accent-ok);
+    color: var(--bg);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px #00e5a033;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 1100px;
+    margin: 0 auto 32px;
+  }
+
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: 1fr; }
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-card .num {
+    font-size: 2.4rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+  }
+
+  .stat-card .desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .stat-card.match .num { color: var(--accent-ok); }
+  .stat-card.only-sna .num { color: var(--accent-sna); }
+  .stat-card.only-pje .num { color: var(--accent-pje); }
+
+  .results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 800px) {
+    .results { grid-template-columns: 1fr; }
+  }
+
+  .result-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .result-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-block-header h3 {
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-sna { background: #ff6b3522; color: var(--accent-sna); border: 1px solid #ff6b3544; }
+  .badge-pje { background: #00d4ff22; color: var(--accent-pje); border: 1px solid #00d4ff44; }
+
+  .search-box {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-box input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    padding: 7px 12px;
+    outline: none;
+  }
+
+  .process-list {
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .process-list::-webkit-scrollbar { width: 4px; }
+  .process-list::-webkit-scrollbar-track { background: transparent; }
+  .process-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .process-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    transition: background 0.15s;
+    cursor: default;
+  }
+
+  .process-item:hover { background: #ffffff08; }
+
+  .process-item .num-text { color: var(--text); }
+  .process-item .copy-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Syne', sans-serif;
+    letter-spacing: 0;
+  }
+  .process-item .copy-btn:hover {
+    background: #ffffff11;
+    color: var(--text);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .export-row {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+  }
+
+  .export-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .export-btn:hover {
+    border-color: var(--accent-ok);
+    color: var(--accent-ok);
+    background: none;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .hidden { display: none !important; }
+
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 40px 20px;
+  }
+
+  .also-match {
+    max-width: 1100px;
+    margin: 20px auto 0;
+  }
+
+  .also-match .result-block-header { cursor: pointer; user-select: none; }
+  .also-match .result-block-header:hover { background: #ffffff05; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--accent-ok);
+    color: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: 8px;
+    transition: transform 0.3s;
+    pointer-events: none;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Comparador PJE × SNA</h1>
+  <p>Cole as listas abaixo e clique em comparar</p>
+</header>
+
+<div class="inputs">
+  <div class="input-group">
+    <label class="label-pje">▶ Lista PJE</label>
+    <textarea id="pje-input" placeholder="Cole aqui os números do PJE&#10;Aceita formato: 0216300-37.2025.8.06.0001&#10;Um processo por linha"></textarea>
+  </div>
+  <div class="input-group">
+    <label class="label-sna">▶ Lista SNA</label>
+    <textarea id="sna-input" placeholder="Cole aqui os números do SNA&#10;Aceita formato: 02163003720258060001&#10;Um processo por linha"></textarea>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button onclick="comparar()">⚡ Comparar Listas</button>
+</div>
+
+<div id="output" class="hidden">
+
+  <div class="stats">
+    <div class="stat-card match">
+      <div class="num" id="stat-match">0</div>
+      <div class="desc">✓ Coincidentes</div>
+    </div>
+    <div class="stat-card only-sna">
+      <div class="num" id="stat-sna">0</div>
+      <div class="desc">Só no SNA</div>
+    </div>
+    <div class="stat-card only-pje">
+      <div class="num" id="stat-pje">0</div>
+      <div class="desc">Só no PJE</div>
+    </div>
+  </div>
+
+  <div class="results">
+    <div class="result-block">
+      <div class="result-block-header">
+        <h3 class="label-sna">Só no SNA — faltam no PJE</h3>
+        <span class="badge badge-sna" id="badge-sna">0</span>
+      </div>
+      <div class="search-box">
+        <input type="text" id="search-sna" placeholder="Filtrar..." oninput="filtrar('sna')" />
+      </div>
+      <div class="process-list" id="list-sna"></div>
+      <div class="export-row">
+        <button class="export-btn" onclick="exportarTxt('sna')">↓ .TXT</button>
+        <button class="export-btn" onclick="copiarTodos('sna')">⎘ Copiar todos</button>
+      </div>
+    </div>
+
+    <div class="result-block">
+      <div class="result-block-header">
+        <h3 class="label-pje">Só no PJE — faltam no SNA</h3>
+        <span class="badge badge-pje" id="badge-pje">0</span>
+      </div>
+      <div class="search-box">
+        <input type="text" id="search-pje" placeholder="Filtrar..." oninput="filtrar('pje')" />
+      </div>
+      <div class="process-list" id="list-pje"></div>
+      <div class="export-row">
+        <button class="export-btn" onclick="exportarTxt('pje')">↓ .TXT</button>
+        <button class="export-btn" onclick="copiarTodos('pje')">⎘ Copiar todos</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="also-match">
+    <div class="result-block">
+      <div class="result-block-header" onclick="toggleMatch()">
+        <h3 style="color: var(--accent-ok)">✓ Processos coincidentes nas duas listas</h3>
+        <span class="badge" style="background:#00e5a022;color:var(--accent-ok);border:1px solid #00e5a044" id="badge-match">0</span>
+      </div>
+      <div id="match-container" class="hidden">
+        <div class="search-box">
+          <input type="text" id="search-match" placeholder="Filtrar..." oninput="filtrar('match')" />
+        </div>
+        <div class="process-list" id="list-match"></div>
+        <div class="export-row">
+          <button class="export-btn" onclick="exportarTxt('match')">↓ .TXT</button>
+          <button class="export-btn" onclick="copiarTodos('match')">⎘ Copiar todos</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Copiado!</div>
+
+<script>
+let dados = { sna: [], pje: [], match: [] };
+
+function normalizar(num) {
+  return num.replace(/[-.\s]/g, '').toUpperCase();
+}
+
+function extrairNumeros(texto) {
+  return texto.split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 5 && /\d/.test(l))
+    .map(l => {
+      // remove header lines
+      if (/número|processo|pje|sna/i.test(l) && !/\d{7}/.test(l)) return null;
+      return l;
+    })
+    .filter(Boolean);
+}
+
+function comparar() {
+  const pjeRaw = extrairNumeros(document.getElementById('pje-input').value);
+  const snaRaw = extrairNumeros(document.getElementById('sna-input').value);
+
+  if (!pjeRaw.length || !snaRaw.length) {
+    alert('Cole as duas listas antes de comparar!');
+    return;
+  }
+
+  const pjeMap = {};
+  pjeRaw.forEach(n => { pjeMap[normalizar(n)] = n; });
+
+  const snaMap = {};
+  snaRaw.forEach(n => { snaMap[normalizar(n)] = n; });
+
+  const pjeSet = new Set(Object.keys(pjeMap));
+  const snaSet = new Set(Object.keys(snaMap));
+
+  const onlySna = [...snaSet].filter(k => !pjeSet.has(k)).map(k => snaMap[k]);
+  const onlyPje = [...pjeSet].filter(k => !snaSet.has(k)).map(k => pjeMap[k]);
+  const match   = [...snaSet].filter(k => pjeSet.has(k)).map(k => snaMap[k]);
+
+  dados = { sna: [...new Set(onlySna)], pje: [...new Set(onlyPje)], match: [...new Set(match)] };
+
+  document.getElementById('stat-match').textContent = dados.match.length;
+  document.getElementById('stat-sna').textContent   = dados.sna.length;
+  document.getElementById('stat-pje').textContent   = dados.pje.length;
+  document.getElementById('badge-sna').textContent   = dados.sna.length;
+  document.getElementById('badge-pje').textContent   = dados.pje.length;
+  document.getElementById('badge-match').textContent = dados.match.length;
+
+  renderLista('sna');
+  renderLista('pje');
+  renderLista('match');
+
+  document.getElementById('output').classList.remove('hidden');
+  document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderLista(tipo, filtro = '') {
+  const el = document.getElementById('list-' + tipo);
+  const lista = dados[tipo].filter(n => !filtro || n.toLowerCase().includes(filtro.toLowerCase()));
+
+  if (!lista.length) {
+    el.innerHTML = `<div class="empty-state">${filtro ? 'Nenhum resultado' : 'Nenhum processo'}</div>`;
+    return;
+  }
+
+  el.innerHTML = lista.map(n => `
+    <div class="process-item">
+      <span class="num-text">${n}</span>
+      <button class="copy-btn" onclick="copiar('${n}')">copiar</button>
+    </div>
+  `).join('');
+}
+
+function filtrar(tipo) {
+  const val = document.getElementById('search-' + tipo).value;
+  renderLista(tipo, val);
+}
+
+function toggleMatch() {
+  document.getElementById('match-container').classList.toggle('hidden');
+}
+
+function copiar(texto) {
+  navigator.clipboard.writeText(texto);
+  mostrarToast('Copiado!');
+}
+
+function copiarTodos(tipo) {
+  const texto = dados[tipo].join('\n');
+  navigator.clipboard.writeText(texto);
+  mostrarToast(`${dados[tipo].length} processos copiados!`);
+}
+
+function exportarTxt(tipo) {
+  const nomes = { sna: 'so_no_SNA', pje: 'so_no_PJE', match: 'coincidentes' };
+  const blob = new Blob([dados[tipo].join('\n')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `processos_${nomes[tipo]}.txt`;
+  a.click();
+}
+
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>

@@ -25,13 +25,12 @@
     color: var(--text);
     font-family: 'Syne', sans-serif;
     min-height: 100vh;
-    padding: 32px 24px;
+    padding: 32px 24px 0;
+    display: flex;
+    flex-direction: column;
   }
 
-  header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
+  header { text-align: center; margin-bottom: 40px; }
 
   header h1 {
     font-size: clamp(1.8rem, 4vw, 3rem);
@@ -56,11 +55,10 @@
     gap: 20px;
     max-width: 1100px;
     margin: 0 auto 28px;
+    width: 100%;
   }
 
-  @media (max-width: 700px) {
-    .inputs { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 700px) { .inputs { grid-template-columns: 1fr; } }
 
   .input-group label {
     display: block;
@@ -96,9 +94,14 @@
   .btn-row {
     text-align: center;
     margin-bottom: 36px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
-  button {
+  .btn-comparar {
     background: linear-gradient(135deg, #00d4ff22, #00e5a022);
     border: 1px solid var(--accent-ok);
     color: var(--accent-ok);
@@ -112,24 +115,24 @@
     transition: all 0.2s;
   }
 
-  button:hover {
+  .btn-comparar:hover {
     background: var(--accent-ok);
     color: var(--bg);
     transform: translateY(-1px);
     box-shadow: 0 8px 24px #00e5a033;
   }
 
+  /* stats */
   .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     max-width: 1100px;
     margin: 0 auto 32px;
+    width: 100%;
   }
 
-  @media (max-width: 600px) {
-    .stats { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 600px) { .stats { grid-template-columns: 1fr; } }
 
   .stat-card {
     background: var(--card);
@@ -139,36 +142,23 @@
     text-align: center;
   }
 
-  .stat-card .num {
-    font-size: 2.4rem;
-    font-weight: 800;
-    font-family: 'JetBrains Mono', monospace;
-    line-height: 1;
-  }
-
-  .stat-card .desc {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 6px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
+  .stat-card .num { font-size: 2.4rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; line-height: 1; }
+  .stat-card .desc { font-size: 0.75rem; color: var(--muted); margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; }
   .stat-card.match .num { color: var(--accent-ok); }
   .stat-card.only-sna .num { color: var(--accent-sna); }
   .stat-card.only-pje .num { color: var(--accent-pje); }
 
+  /* resultados */
   .results {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     max-width: 1100px;
     margin: 0 auto;
+    width: 100%;
   }
 
-  @media (max-width: 800px) {
-    .results { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 800px) { .results { grid-template-columns: 1fr; } }
 
   .result-block {
     background: var(--card);
@@ -204,10 +194,8 @@
   .badge-sna { background: #ff6b3522; color: var(--accent-sna); border: 1px solid #ff6b3544; }
   .badge-pje { background: #00d4ff22; color: var(--accent-pje); border: 1px solid #00d4ff44; }
 
-  .search-box {
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border);
-  }
+  /* filtro de busca */
+  .search-box { padding: 10px 16px; border-bottom: 1px solid var(--border); }
 
   .search-box input {
     width: 100%;
@@ -219,8 +207,39 @@
     font-size: 0.78rem;
     padding: 7px 12px;
     outline: none;
+    transition: border-color 0.2s;
   }
 
+  .search-box input:focus { border-color: var(--accent-ok); }
+
+  /* botões de ano */
+  .year-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    min-height: 42px;
+  }
+
+  .year-btn {
+    all: unset;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 11px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    opacity: 0.5;
+  }
+
+  .year-btn:hover { opacity: 1; transform: translateY(-1px); }
+  .year-btn.active { opacity: 1; }
+
+  /* lista */
   .process-list {
     max-height: 380px;
     overflow-y: auto;
@@ -239,39 +258,34 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
     transition: background 0.15s;
-    cursor: default;
   }
 
   .process-item:hover { background: #ffffff08; }
-
   .process-item .num-text { color: var(--text); }
-  .process-item .copy-btn {
-    background: none;
-    border: none;
+
+  .copy-btn {
+    all: unset;
     color: var(--muted);
     cursor: pointer;
-    font-size: 0.7rem;
-    padding: 2px 6px;
+    font-size: 0.68rem;
+    padding: 2px 7px;
     border-radius: 4px;
-    font-family: 'Syne', sans-serif;
-    letter-spacing: 0;
+    font-family: 'JetBrains Mono', monospace;
+    transition: background 0.15s, color 0.15s;
   }
-  .process-item .copy-btn:hover {
-    background: #ffffff11;
-    color: var(--text);
-    transform: none;
-    box-shadow: none;
-  }
+
+  .copy-btn:hover { background: #ffffff14; color: var(--text); }
 
   .export-row {
     padding: 12px 20px;
     border-top: 1px solid var(--border);
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
   }
 
   .export-btn {
-    background: none;
+    all: unset;
     border: 1px solid var(--border);
     color: var(--muted);
     font-family: 'JetBrains Mono', monospace;
@@ -279,18 +293,10 @@
     padding: 5px 12px;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0;
-    font-weight: 400;
+    transition: border-color 0.15s, color 0.15s;
   }
 
-  .export-btn:hover {
-    border-color: var(--accent-ok);
-    color: var(--accent-ok);
-    background: none;
-    transform: none;
-    box-shadow: none;
-  }
+  .export-btn:hover { border-color: var(--accent-ok); color: var(--accent-ok); }
 
   .hidden { display: none !important; }
 
@@ -302,14 +308,26 @@
     padding: 40px 20px;
   }
 
-  .also-match {
-    max-width: 1100px;
-    margin: 20px auto 0;
-  }
-
+  /* coincidentes */
+  .also-match { max-width: 1100px; margin: 20px auto 0; width: 100%; }
   .also-match .result-block-header { cursor: pointer; user-select: none; }
   .also-match .result-block-header:hover { background: #ffffff05; }
 
+  /* rodapé */
+  footer {
+    margin-top: auto;
+    padding: 36px 24px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  footer .robot { font-size: 1.1rem; margin-right: 6px; }
+  footer span { opacity: 0.6; }
+
+  /* toast */
   .toast {
     position: fixed;
     bottom: 24px;
@@ -324,6 +342,7 @@
     border-radius: 8px;
     transition: transform 0.3s;
     pointer-events: none;
+    z-index: 999;
   }
 
   .toast.show { transform: translateX(-50%) translateY(0); }
@@ -348,7 +367,7 @@
 </div>
 
 <div class="btn-row">
-  <button onclick="comparar()">⚡ Comparar Listas</button>
+  <button class="btn-comparar" onclick="comparar()">⚡ Comparar Listas</button>
 </div>
 
 <div id="output" class="hidden">
@@ -369,14 +388,17 @@
   </div>
 
   <div class="results">
+
+    <!-- SNA -->
     <div class="result-block">
       <div class="result-block-header">
         <h3 class="label-sna">Só no SNA — faltam no PJE</h3>
         <span class="badge badge-sna" id="badge-sna">0</span>
       </div>
       <div class="search-box">
-        <input type="text" id="search-sna" placeholder="Filtrar..." oninput="filtrar('sna')" />
+        <input type="text" id="search-sna" placeholder="Filtrar por número..." oninput="filtrar('sna')" />
       </div>
+      <div class="year-filters" id="years-sna"></div>
       <div class="process-list" id="list-sna"></div>
       <div class="export-row">
         <button class="export-btn" onclick="exportarTxt('sna')">↓ .TXT</button>
@@ -384,32 +406,37 @@
       </div>
     </div>
 
+    <!-- PJE -->
     <div class="result-block">
       <div class="result-block-header">
         <h3 class="label-pje">Só no PJE — faltam no SNA</h3>
         <span class="badge badge-pje" id="badge-pje">0</span>
       </div>
       <div class="search-box">
-        <input type="text" id="search-pje" placeholder="Filtrar..." oninput="filtrar('pje')" />
+        <input type="text" id="search-pje" placeholder="Filtrar por número..." oninput="filtrar('pje')" />
       </div>
+      <div class="year-filters" id="years-pje"></div>
       <div class="process-list" id="list-pje"></div>
       <div class="export-row">
         <button class="export-btn" onclick="exportarTxt('pje')">↓ .TXT</button>
         <button class="export-btn" onclick="copiarTodos('pje')">⎘ Copiar todos</button>
       </div>
     </div>
+
   </div>
 
+  <!-- Coincidentes -->
   <div class="also-match">
     <div class="result-block">
       <div class="result-block-header" onclick="toggleMatch()">
-        <h3 style="color: var(--accent-ok)">✓ Processos coincidentes nas duas listas</h3>
+        <h3 style="color:var(--accent-ok)">✓ Processos coincidentes nas duas listas</h3>
         <span class="badge" style="background:#00e5a022;color:var(--accent-ok);border:1px solid #00e5a044" id="badge-match">0</span>
       </div>
       <div id="match-container" class="hidden">
         <div class="search-box">
-          <input type="text" id="search-match" placeholder="Filtrar..." oninput="filtrar('match')" />
+          <input type="text" id="search-match" placeholder="Filtrar por número..." oninput="filtrar('match')" />
         </div>
+        <div class="year-filters" id="years-match"></div>
         <div class="process-list" id="list-match"></div>
         <div class="export-row">
           <button class="export-btn" onclick="exportarTxt('match')">↓ .TXT</button>
@@ -421,24 +448,42 @@
 
 </div>
 
+<footer>
+  <span class="robot">🤖</span><span>created by Lucas</span>
+</footer>
+
 <div class="toast" id="toast">Copiado!</div>
 
 <script>
 let dados = { sna: [], pje: [], match: [] };
+// anoAtivo por tipo: null = todos
+let anoAtivo = { sna: null, pje: null, match: null };
 
-function normalizar(num) {
-  return num.replace(/[-.\s]/g, '').toUpperCase();
+const anoCores = {
+  '2014': '#a78bfa', '2015': '#c084fc', '2016': '#e879f9',
+  '2017': '#f472b6', '2018': '#fb7185', '2019': '#fb923c',
+  '2020': '#facc15', '2021': '#a3e635', '2022': '#34d399',
+  '2023': '#60a5fa', '2024': '#38bdf8', '2025': '#00d4ff',
+  '2026': '#a5f3fc', '2027': '#f87171'
+};
+
+function corAno(ano) { return anoCores[ano] || '#94a3b8'; }
+
+function normalizar(num) { return num.replace(/[-.\s]/g, '').toUpperCase(); }
+
+// NNNNNNN-DD.AAAA.J.TT.OOOO → normalizado NNNNNNNDDAAAAJTTOOOO
+// AAAA está nas posições 9-12 do número normalizado
+function extrairAno(num) {
+  const l = normalizar(num);
+  if (l.length >= 13) return l.substring(9, 13);
+  return '????';
 }
 
 function extrairNumeros(texto) {
   return texto.split('\n')
     .map(l => l.trim())
     .filter(l => l.length > 5 && /\d/.test(l))
-    .map(l => {
-      // remove header lines
-      if (/número|processo|pje|sna/i.test(l) && !/\d{7}/.test(l)) return null;
-      return l;
-    })
+    .map(l => (/número|processo|pje|sna/i.test(l) && !/\d{7}/.test(l)) ? null : l)
     .filter(Boolean);
 }
 
@@ -446,84 +491,121 @@ function comparar() {
   const pjeRaw = extrairNumeros(document.getElementById('pje-input').value);
   const snaRaw = extrairNumeros(document.getElementById('sna-input').value);
 
-  if (!pjeRaw.length || !snaRaw.length) {
-    alert('Cole as duas listas antes de comparar!');
-    return;
-  }
+  if (!pjeRaw.length || !snaRaw.length) { alert('Cole as duas listas antes de comparar!'); return; }
 
-  const pjeMap = {};
+  const pjeMap = {}, snaMap = {};
   pjeRaw.forEach(n => { pjeMap[normalizar(n)] = n; });
-
-  const snaMap = {};
   snaRaw.forEach(n => { snaMap[normalizar(n)] = n; });
 
   const pjeSet = new Set(Object.keys(pjeMap));
   const snaSet = new Set(Object.keys(snaMap));
 
-  const onlySna = [...snaSet].filter(k => !pjeSet.has(k)).map(k => snaMap[k]);
-  const onlyPje = [...pjeSet].filter(k => !snaSet.has(k)).map(k => pjeMap[k]);
-  const match   = [...snaSet].filter(k => pjeSet.has(k)).map(k => snaMap[k]);
+  dados = {
+    sna:   [...new Set([...snaSet].filter(k => !pjeSet.has(k)).map(k => snaMap[k]))],
+    pje:   [...new Set([...pjeSet].filter(k => !snaSet.has(k)).map(k => pjeMap[k]))],
+    match: [...new Set([...snaSet].filter(k =>  pjeSet.has(k)).map(k => snaMap[k]))]
+  };
 
-  dados = { sna: [...new Set(onlySna)], pje: [...new Set(onlyPje)], match: [...new Set(match)] };
+  anoAtivo = { sna: null, pje: null, match: null };
 
-  document.getElementById('stat-match').textContent = dados.match.length;
-  document.getElementById('stat-sna').textContent   = dados.sna.length;
-  document.getElementById('stat-pje').textContent   = dados.pje.length;
-  document.getElementById('badge-sna').textContent   = dados.sna.length;
-  document.getElementById('badge-pje').textContent   = dados.pje.length;
-  document.getElementById('badge-match').textContent = dados.match.length;
+  ['match','sna','pje'].forEach(t => {
+    document.getElementById('stat-' + t).textContent  = dados[t].length;
+    document.getElementById('badge-' + t).textContent = dados[t].length;
+  });
 
-  renderLista('sna');
-  renderLista('pje');
-  renderLista('match');
+  ['sna','pje','match'].forEach(t => {
+    renderFiltrosAno(t);
+    renderLista(t);
+  });
 
   document.getElementById('output').classList.remove('hidden');
   document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
 }
 
-function renderLista(tipo, filtro = '') {
+function anosDisponiveis(tipo) {
+  const anos = new Set(dados[tipo].map(n => extrairAno(n)));
+  return [...anos].sort((a, b) => b.localeCompare(a));
+}
+
+function renderFiltrosAno(tipo) {
+  const container = document.getElementById('years-' + tipo);
+  const anos = anosDisponiveis(tipo);
+
+  if (anos.length <= 1) { container.innerHTML = ''; return; }
+
+  const ativo = anoAtivo[tipo];
+
+  let html = `<button class="year-btn ${ativo === null ? 'active' : ''}"
+    style="color:#94a3b8;background:#94a3b818;border-color:#94a3b844"
+    onclick="selecionarAno('${tipo}', null)">Todos</button>`;
+
+  anos.forEach(ano => {
+    const cor = corAno(ano);
+    const qtd = dados[tipo].filter(n => extrairAno(n) === ano).length;
+    const isAtivo = ativo === ano;
+    html += `<button class="year-btn ${isAtivo ? 'active' : ''}"
+      style="color:${cor};background:${cor}18;border-color:${cor}${isAtivo ? '99' : '44'}"
+      onclick="selecionarAno('${tipo}', '${ano}')">${ano} <span style="opacity:.6">(${qtd})</span></button>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function selecionarAno(tipo, ano) {
+  anoAtivo[tipo] = ano;
+  renderFiltrosAno(tipo);
+  renderLista(tipo);
+}
+
+function renderLista(tipo) {
   const el = document.getElementById('list-' + tipo);
-  const lista = dados[tipo].filter(n => !filtro || n.toLowerCase().includes(filtro.toLowerCase()));
+  const textFiltro = document.getElementById('search-' + tipo).value.toLowerCase();
+  const ano = anoAtivo[tipo];
+
+  let lista = dados[tipo].filter(n => {
+    const textoOk = !textFiltro || n.toLowerCase().includes(textFiltro);
+    const anoOk   = !ano || extrairAno(n) === ano;
+    return textoOk && anoOk;
+  });
 
   if (!lista.length) {
-    el.innerHTML = `<div class="empty-state">${filtro ? 'Nenhum resultado' : 'Nenhum processo'}</div>`;
+    el.innerHTML = `<div class="empty-state">Nenhum processo encontrado</div>`;
     return;
   }
 
-  el.innerHTML = lista.map(n => `
-    <div class="process-item">
+  el.innerHTML = lista.map(n => {
+    const esc = n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div class="process-item">
       <span class="num-text">${n}</span>
-      <button class="copy-btn" onclick="copiar('${n}')">copiar</button>
-    </div>
-  `).join('');
+      <button class="copy-btn" onclick="copiar('${esc}')">copiar</button>
+    </div>`;
+  }).join('');
 }
 
-function filtrar(tipo) {
-  const val = document.getElementById('search-' + tipo).value;
-  renderLista(tipo, val);
-}
+function filtrar(tipo) { renderLista(tipo); }
 
 function toggleMatch() {
   document.getElementById('match-container').classList.toggle('hidden');
 }
 
-function copiar(texto) {
-  navigator.clipboard.writeText(texto);
-  mostrarToast('Copiado!');
-}
+function copiar(texto) { navigator.clipboard.writeText(texto); mostrarToast('Copiado!'); }
 
 function copiarTodos(tipo) {
-  const texto = dados[tipo].join('\n');
-  navigator.clipboard.writeText(texto);
-  mostrarToast(`${dados[tipo].length} processos copiados!`);
+  // respeita filtro de ano ativo
+  const ano = anoAtivo[tipo];
+  const lista = ano ? dados[tipo].filter(n => extrairAno(n) === ano) : dados[tipo];
+  navigator.clipboard.writeText(lista.join('\n'));
+  mostrarToast(`${lista.length} processos copiados!`);
 }
 
 function exportarTxt(tipo) {
   const nomes = { sna: 'so_no_SNA', pje: 'so_no_PJE', match: 'coincidentes' };
-  const blob = new Blob([dados[tipo].join('\n')], { type: 'text/plain' });
+  const ano = anoAtivo[tipo];
+  const lista = ano ? dados[tipo].filter(n => extrairAno(n) === ano) : dados[tipo];
+  const sufixo = ano ? `_${ano}` : '';
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `processos_${nomes[tipo]}.txt`;
+  a.href = URL.createObjectURL(new Blob([lista.join('\n')], { type: 'text/plain' }));
+  a.download = `processos_${nomes[tipo]}${sufixo}.txt`;
   a.click();
 }
 
